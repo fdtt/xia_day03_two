@@ -9,6 +9,8 @@ import com.example.xia_day03_two.Presenter.Presenter;
 import com.example.xia_day03_two.View.Iview;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,17 +53,11 @@ public class MainActivity extends AppCompatActivity implements Iview {
         myAdapter.setOnClick(new MyAdapter.OnClick() {
             @Override
             public void OnClick(int psoition) {
-                User user1 = list.get(psoition);
-                User user2 = list.get(psoition+1);
-                User user = list.get(psoition-1);
-                String url = user.getUrl();
-                String url1 = user1.getUrl();
-                String url2 = user2.getUrl();
-                Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-                intent.putExtra("url",url);
-                intent.putExtra("url1",url1);
-                intent.putExtra("url2",url2);
-                startActivity(intent);
+                Myeven myeven = new Myeven();
+                myeven.list=list;
+                EventBus.getDefault().postSticky(myeven);
+
+                startActivity(new Intent(MainActivity.this,Main2Activity.class));
             }
         });
     }

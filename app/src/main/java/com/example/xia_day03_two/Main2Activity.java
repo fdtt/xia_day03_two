@@ -13,37 +13,44 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main2Activity extends AppCompatActivity {
 
     private ViewPager mVp;
+    private List<User> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         initView();
+        EventBus.getDefault().register(this);
+    }
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    public  void initmore(Myeven myeven){
+        list = myeven.list;
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
         mVp = (ViewPager) findViewById(R.id.vp);
-        Intent intent = getIntent();
-        String url = intent.getStringExtra("url");
-        String url1 = intent.getStringExtra("url1");
-        String url2 = intent.getStringExtra("url2");
-        List<String>list=new ArrayList<>();
-        list.add(url);
-        list.add(url1);
-        list.add(url2);
         myadater_vp myadater_vp = new myadater_vp(list);
         mVp.setAdapter(myadater_vp);
     }
     class  myadater_vp extends PagerAdapter{
-        private List<String>list;
+        private List<User>list;
 
-        public myadater_vp(List<String> list) {
+        public myadater_vp(List<User> list) {
             this.list = list;
         }
 
@@ -62,10 +69,10 @@ public class Main2Activity extends AppCompatActivity {
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            String s = list.get(position);
+            User user = list.get(position);
             View inflate = LayoutInflater.from(Main2Activity.this).inflate(R.layout.item_vp, null);
            ImageView iv= inflate.findViewById(R.id.iv_vp);
-            Glide.with(Main2Activity.this).load(s).into(iv);
+            Glide.with(Main2Activity.this).load(user.getUrl()).into(iv);
             container.addView(inflate);
             return inflate;
         }
